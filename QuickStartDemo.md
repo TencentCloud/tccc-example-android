@@ -36,8 +36,8 @@
 	<li/>SECRETID：请设置为实际的密钥ID信息。
   <li/>SECRETKEY：请设置为实际的密钥Key信息。
   </ul>
- 
-![](docs/copycode.png)
+
+![](docs/copyDemoCode.png.png)
 
 
 >!
