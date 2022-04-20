@@ -126,7 +126,9 @@ public class GenerateTestUserSig {
                     int errorCode = jsonObject.getInt("errorCode");
                     String errorMessage = jsonObject.getString("errorMessage");
                     if(errorCode!=0){
-                        callBack.onError(errorCode,errorMessage);
+                        mainHandler.post(()-> {
+                            callBack.onError(errorCode, errorMessage);
+                        });
                         return;
                     }
                     String userSig = jsonObject.getString("UserSig");
