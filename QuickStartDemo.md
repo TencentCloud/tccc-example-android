@@ -36,7 +36,7 @@
 	<li/>SECRETID：请设置为实际的密钥ID信息。
   <li/>SECRETKEY：请设置为实际的密钥Key信息。
   </ul>
-	<img src="https://qcloudimg.tencent-cloud.cn/raw/aa023584f1b36b12e81b556bbe914ce9.png">
+	<img src="docs/copycode.png">
 
 >!
 >- 本文提到的生成 UserSig 的方案是在客户端代码中配置 SECRETID、SECRETKEY，该方法中 SECRETID、SECRETKEY 很容易被反编译逆向破解，一旦您的密钥泄露，攻击者就可以盗用您的腾讯云流量，因此**该方法仅适合本地跑通 TCCCSimpleDemo 和功能调试**。
