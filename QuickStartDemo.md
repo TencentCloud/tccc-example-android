@@ -37,7 +37,7 @@
   <li/>SECRETKEY：请设置为实际的密钥Key信息。
   </ul>
 
-![](docs/copyDemoCode.png.png)
+![](docs/copyDemoCode.png)
 
 
 >!
