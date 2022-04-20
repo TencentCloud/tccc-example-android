@@ -1,4 +1,4 @@
-# 快速跑通访客端Android Demo
+# 快速跑通用户端Android Demo
 
 本文主要介绍如何快速跑通腾讯云呼叫中心访客端 Android TCCC Demo，只要按照如下步骤进行配置，就可以跑通访客端的 Android Demo。
 
@@ -14,27 +14,27 @@
 [](id:step1)
 ### 步骤1：配置视频客服
 1. 登录 [呼叫中心管理端](https://tccc.qcloud.com/login)，选择**登录的呼叫中心** > **管理端** > **视频客服** > **技能组管理** > **添加技能组** 。
-![](https://qcloudimg.tencent-cloud.cn/raw/0f9dd2b5f28c55860ec1aa4b1f61a291.png)
+![](docs/AddSkillset.png)
 
 2. 添加 **新客服** 到对应的技能组中。
-![](https://qcloudimg.tencent-cloud.cn/raw/171f7117b3a3cbcd5f5d2e0e2e586d2a.png)
+![](docs/addCustomerService%20.png)
 
 3. 新增**应用配置入口**。 选择**管理端** > **渠道管理** > **应用配置入口** > **新增** 。复制刚刚新建的 APP ID
-![](https://qcloudimg.tencent-cloud.cn/raw/31fe59a617cf0acf82cd880fb0107d5e.png)
+![](docs/addApp.png)
 
 [](id:step2)
 ### 步骤2：下载 SDK 和 TCCCSimpleDemo 源码
-1. 根据实际业务需求 [TCCCSimpleDemo]() 源码。
+1. 根据实际业务需求 [TCCCSimpleDemo](https://github.com/tencentyun/TCCCSimpleDemo) 源码。
 
 [](id:step3)
 ### 步骤3：配置 TCCCSimpleDemo 工程文件
 1. 找到并打开 `Debug/src/main/java/com/tencent/debug/GenerateTestUserSig.java` 文件。
 3. 设置 `GenerateTestUserSig.java` 文件中的相关参数：
 	<ul>
-  <li/>VIDEO_CHANNELID：默认为 PLACEHOLDER ，请设置为实际的 应用配置入口 APP ID
-  <li/>SDKAPPID：默认为 0 ，请设置为实际的腾讯云呼叫中心 SDKAppID。
-	<li/>SECRETID：默认为 PLACEHOLDER ，请设置为实际的密钥ID信息。
-  <li/>SECRETKEY：默认为 PLACEHOLDER ，请设置为实际的密钥Key信息。
+  <li/>VIDEO_CHANNELID：请设置为实际的 应用配置入口 APP ID。
+  <li/>SDKAPPID：请设置为实际的腾讯云呼叫中心 SDKAppID。
+	<li/>SECRETID：请设置为实际的密钥ID信息。
+  <li/>SECRETKEY：请设置为实际的密钥Key信息。
   </ul>
 	<img src="https://qcloudimg.tencent-cloud.cn/raw/aa023584f1b36b12e81b556bbe914ce9.png">
 
@@ -50,6 +50,6 @@
 基本功能如下图所示
 | 呼叫中效果 | 接听效果 |
 |-----|-----|
-|![](https://qcloudimg.tencent-cloud.cn/raw/0850a8df08e50e13a8e958fa8d430f32.jpeg)|![](https://qcloudimg.tencent-cloud.cn/raw/6e201d1394fd152c1ff4b2efa5b78b36.jpeg)|
+|![](docs/demo1.jpeg)|![](docs/demo2.jpeg)|
 
 
