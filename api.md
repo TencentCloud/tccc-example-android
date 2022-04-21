@@ -107,7 +107,7 @@ mTCCCCloud.startRemoteView(TCCCCloudDef.TCCC_VIDEO_STREAM_TYPE_BIG,txvMainVideoV
 // 开启本地音频采集
 mTCCCCloud.startLocalAudio(TCCCCloudDef.TCCC_AUDIO_QUALITY_SPEECH);
 // 暂停发布本地音频流
-mTCCCCloud.muteLocalAudio(mIsMuteMic);
+mTCCCCloud.muteLocalAudio(false);
 ```
 
 ### 调试相关接口
@@ -137,7 +137,6 @@ mTCCCCloud.setListener(new TCCCCloudListener() {
     /**
         * 错误事件回调
         * 错误事件，表示 SDK 抛出的不可恢复的错误，比如进入房间失败或设备开启失败等。
-        *
         * @param errCode   错误码
         * @param errMsg    错误信息
         * @param extraInfo 扩展信息字段，个别错误码可能会带额外的信息帮助定位问题
@@ -150,7 +149,6 @@ mTCCCCloud.setListener(new TCCCCloudListener() {
     /**
         * 警告事件回调
         * 警告事件，表示 SDK 抛出的提示性问题，比如视频出现卡顿或 CPU 使用率太高等。
-        *
         * @param warningCode 警告码
         * @param warningMsg  警告信息
         * @param extraInfo   扩展信息字段，个别警告码可能会带额外的信息帮助定位问题
@@ -177,12 +175,16 @@ mTCCCCloud.setListener(new TCCCCloudListener() {
      * 调用 TCCCCloud 中的 startCall() 接口执行呼叫操作后，会收到来自 TCCCCloudListener 的 onStartCall(result) 回调：
      * 如果发起视频通话成功，回调 result 会是一个正数（result > 0），代表发起视频通话所消耗的时间，单位是毫秒（ms）。
      * 如果发起视频通话失败，回调 result 会是一个负数（result < 0），代表失败原因的错误码。 发起视频通话失败的错误码含义请参见错误码表。
-     *
      * @param result result > 0 时为发起视频通话耗时（ms），result < 0 时为发起视频通话错误码。
      */
     @Override
     public void onStartCall(long result) {
         super.onStartCall(result);
+        if(result >0){
+          // 发起通话成功
+        }else{
+          //  发起通话失败
+        }
     }
 
     /**
@@ -198,16 +200,25 @@ mTCCCCloud.setListener(new TCCCCloudListener() {
      * 收到该回调说明本次通话结束了。
      *
      * @param reason  结束原因
-     *                坐席无人接听     TCCC_SESSION_END_NO_SEAT_ONLINE
-     *                坐席端挂断       TCCC_SESSION_END_SEAT_HAND_UP
-     *                接听超时         TCCC_SESSION_END_TIME_OUT
-     *                坐席接听响应失败  TCCC_SESSION_END_SEAT_UNKNOWN
-     *                用户主动挂断     TCCC_SESSION_END_USER_HANG_UP
      * @param message 结束原因描述
      */
     @Override
     public void onCallEnd(int reason, String message) {
         super.onCallEnd(reason, message);
+        if (TCCCCloudDef.TCCC_CALL_END_USER_HANG_UP == reason) {
+                  // "挂断成功"
+              }else if(TCCCCloudDef.TCCC_CALL_END_NO_SEAT_ONLINE == reason){
+                  // "坐席无人接听"
+              }else if(TCCCCloudDef.TCCC_CALL_END_SEAT_HAND_UP == reason){
+                  // "坐席已挂断"
+              }else if(TCCCCloudDef.TCCC_CALL_END_TIME_OUT == reason){
+                  // "坐席接听超时"
+              }else if(TCCCCloudDef.TCCC_CALL_END_SEAT_UNKNOWN == reason) {
+                  // "系统异常挂断"
+              }
+          }
+          mTCCCCloud.stopLocalPreview();
+          mTCCCCloud.stopRemoteView(TCCCCloudDef.TCCC_VIDEO_STREAM_TYPE_SMALL);
     }
 });
 ```
@@ -225,7 +236,6 @@ mTCCCCloud.setListener(new TCCCCloudListener() {
     /**
       * 坐席端用户发布/取消了自己的视频
       * 当您收到 onSeatVideoAvailable(true) 通知时，表示坐席端用户发布了自己的声音
-      *
       * @param available 远端用户是否发布（或取消发布）了主路视频画面，true: 发布；false：取消发布。
       */
     @Override
