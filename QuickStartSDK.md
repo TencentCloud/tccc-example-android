@@ -6,9 +6,9 @@
 - Android Studio 3.5+。
 - Android 4.1（SDK API 16）及以上系统。
 
-## 集成 SDK（aar）
+## 集成 SDK（aar、jar）
 
-### 手动下载（aar）
+### 手动下载（aar、jar）
 目前我们暂时还未发布到 mavenCentral ，您只能手动下载 SDK 集成到工程里：
 
 1. 下载最新版本 [TCCC SDK](https://tccc.qcloud.com/assets/doc/user/android/TCCC_SDK_Android_latest.zip)。
@@ -62,9 +62,10 @@ defaultConfig {
 ### 创建实例和事件回调
 | API | 描述 |
 |-----|-----|
-| [sharedInstance]() | 创建 TCCCCloud 实例（单例模式） |
-| [destroySharedInstance]() | 销毁 TCCCCloud 实例（单例模式）  |
-| [setListener]() | 设置 TCCC 事件回调 |
+| [sharedInstance](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a22af858f9d59111b6cf8f6a6258b7c11) | 创建 TCCCCloud 实例（单例模式） |
+| [destroySharedInstance](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a201ba05e2bc74c4059a5300aaf494054) | 销毁 TCCCCloud 实例（单例模式）  |
+| [setListener](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a15d9d2786df1d0982eda5d681fbd1643) | 设置 TCCC 事件回调 |
+
 
 ### 登录相关接口函数
 | API | 描述 |
@@ -108,11 +109,11 @@ defaultConfig {
 ### 调试相关接口
 | API | 描述 |
 |-----|-----|
-| [getSDKVersion]() | 获取 SDK 版本信息 |
-| [setLogLevel]() | 设置 Log 输出级别 |
-| [setConsoleEnabled]() | 启用/禁用控制台日志打印 |
-| [showDebugView]() | 显示仪表盘 |
-| [callExperimentalAPI]() | 调用实验性接口 |
+| [getSDKVersion](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a06fc025ba34778f33131804bb13cc452) | 获取 SDK 版本信息 |
+| [setLogLevel](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a85a5fcff692eb579ceb38cb91f72c75e) | 设置 Log 输出级别 |
+| [setConsoleEnabled](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a3ebbe12044944180abc5675bff8f1936) | 启用/禁用控制台日志打印 |
+| [showDebugView](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#acb95a94f4328e794b25fa8d201cc617d) | 显示仪表盘 |
+| [callExperimentalAPI](https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a2ced0e180d468367b84658b707c7ed71) | 调用实验性接口 |
 
 ### 错误和警告事件
 | API | 描述 |
