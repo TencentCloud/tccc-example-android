@@ -56,6 +56,8 @@ defaultConfig {
 ```
 -keep class com.tencent.** { *; }
 ```
+## 代码实现
+具体编码实现可参考 [API 概览以及示例](api.md)
 
 ## 常见问题
 ###  如何查看 TCCC 日志？
