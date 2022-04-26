@@ -1,6 +1,8 @@
 package com.tencent.tcccsimpledemo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -18,6 +20,7 @@ import com.tencent.tccc.ui.TXVideoView;
 import com.tencent.tcccsimpledemo.base.TCCCBaseActivity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class CallingActivity extends TCCCBaseActivity {
     private TXVideoView txvMainVideoView;
@@ -115,109 +118,133 @@ public class CallingActivity extends TCCCBaseActivity {
         });
     }
 
+    /**
+     * 获取安卓设备的唯一ID。
+     * @return
+     */
+    private String getAndroidUuid(){
+        String uuid = "";
+        SharedPreferences preferences= this.getApplicationContext().getSharedPreferences("TCCC_UserID", Context.MODE_PRIVATE);
+        String userId = preferences.getString("userId", "");
+        if("".equals(userId)){
+            SharedPreferences.Editor editor=preferences.edit();
+            uuid =  UUID.randomUUID().toString().replaceAll("-","");
+            editor.putString("userId",uuid);
+            editor.commit();
+        } else{
+            uuid = userId;
+        }
+        return uuid;
+    }
+
+    /**
+     *
+     */
+    private TCCCCloudListener mTCCCCloudListener = new TCCCCloudListener() {
+
+        /// 错误事件回调
+        @Override
+        public void onError(int errCode, String errMsg, Bundle extraInfo) {
+            super.onError(errCode, errMsg, extraInfo);
+
+        }
+
+        /// 警告事件回调
+        @Override
+        public void onWarning(int warningCode, String warningMsg, Bundle extraInfo) {
+            super.onWarning(warningCode, warningMsg, extraInfo);
+        }
+
+        /// 发起通话成功与否的事件回调
+        @Override
+        public void onStartCall(long result) {
+            if(result>0){
+                txt_tips.setText("呼出成功");
+            }else{
+                txt_tips.setText("呼出异常["+result+"]");
+            }
+        }
+
+        /// 坐席端接听回调
+        @Override
+        public void onAccepted() {
+            super.onAccepted();
+            mIsCalling = true;
+            txt_tips.setText("已接通");
+            txvSmallView.setVisibility(View.VISIBLE);
+            mTCCCCloud.updateLocalView(txvSmallView);
+            TCCCCloudDef.TCCCRenderParams tcccRenderParams = new TCCCCloudDef.TCCCRenderParams();
+            tcccRenderParams.fillMode = TCCCCloudDef.TCCC_VIDEO_RENDER_MODE_FILL;
+            mTCCCCloud.setRemoteRenderParams(TCCCCloudDef.TCCC_VIDEO_STREAM_TYPE_BIG,tcccRenderParams);
+        }
+
+        /// 通话结束回调
+        @Override
+        public void onCallEnd(int reason, String message) {
+            super.onCallEnd(reason, message);
+            String endMsg = "系统异常挂断";
+            if (TCCCCloudDef.TCCC_CALL_END_USER_HANG_UP == reason) {
+                endMsg ="挂断成功";
+            }else if(TCCCCloudDef.TCCC_CALL_END_NO_SEAT_ONLINE == reason){
+                endMsg ="坐席无人接听";
+            }else if(TCCCCloudDef.TCCC_CALL_END_SEAT_HAND_UP == reason){
+                endMsg ="坐席已挂断";
+            }else if(TCCCCloudDef.TCCC_CALL_END_TIME_OUT == reason){
+                endMsg ="坐席接听超时";
+            }
+            stopNgoBack(endMsg);
+        }
+
+        /// 坐席端用户发布/取消了自己的视频
+        @Override
+        public void onRemoteVideoAvailable(boolean available) {
+            super.onRemoteVideoAvailable(available);
+            if(available) {
+                // 显示坐席端画面
+                mTCCCCloud.startRemoteView(TCCCCloudDef.TCCC_VIDEO_STREAM_TYPE_BIG,txvMainVideoView);
+                txvMainVideoView.setVisibility(View.VISIBLE);
+            }
+            else {
+                txvMainVideoView.setVisibility(View.GONE);
+            }
+        }
+
+        /// 音量大小的反馈回调
+        @Override
+        public void onUserVoiceVolume(ArrayList<TCCCCloudDef.TCCCVolumeInfo> userVolumes, int totalVolume){
+            super.onUserVoiceVolume(userVolumes,totalVolume);
+        }
+
+        /// 坐席端用户发布/取消了自己的音频
+        @Override
+        public void onRemoteAudioAvailable(boolean available) {
+            super.onRemoteAudioAvailable(available);
+        }
+
+        /// SDK 与云端的连接已经断开
+        @Override
+        public void onConnectionLost() {
+            super.onConnectionLost();
+        }
+
+        /// SDK 正在尝试重新连接到云端
+        @Override
+        public void onTryToReconnect() {
+            super.onTryToReconnect();
+        }
+
+        /// SDK 与云端的连接已经恢复
+        @Override
+        public void onConnectionRecovery() {
+            super.onConnectionRecovery();
+        }
+    };
+
     private void initTCCC(){
         /// 创建实例和设置事件回调
         mTCCCCloud = TCCCCloud.sharedInstance(getApplicationContext());
         /// 设置事件回调
-        mTCCCCloud.setListener(new TCCCCloudListener() {
-
-            /// 错误事件回调
-            @Override
-            public void onError(int errCode, String errMsg, Bundle extraInfo) {
-                super.onError(errCode, errMsg, extraInfo);
-
-            }
-
-            /// 警告事件回调
-            @Override
-            public void onWarning(int warningCode, String warningMsg, Bundle extraInfo) {
-                super.onWarning(warningCode, warningMsg, extraInfo);
-            }
-
-            /// 发起通话成功与否的事件回调
-            @Override
-            public void onStartCall(long result) {
-                if(result>0){
-                    txt_tips.setText("呼出成功");
-                }else{
-                    txt_tips.setText("呼出异常["+result+"]");
-                }
-            }
-
-            /// 坐席端接听回调
-            @Override
-            public void onAccepted() {
-                super.onAccepted();
-                mIsCalling = true;
-                txt_tips.setText("已接通");
-                txvSmallView.setVisibility(View.VISIBLE);
-                mTCCCCloud.updateLocalView(txvSmallView);
-                TCCCCloudDef.TCCCRenderParams tcccRenderParams = new TCCCCloudDef.TCCCRenderParams();
-                tcccRenderParams.fillMode = TCCCCloudDef.TCCC_VIDEO_RENDER_MODE_FILL;
-                mTCCCCloud.setRemoteRenderParams(TCCCCloudDef.TCCC_VIDEO_STREAM_TYPE_BIG,tcccRenderParams);
-            }
-
-            /// 通话结束回调
-            @Override
-            public void onCallEnd(int reason, String message) {
-                super.onCallEnd(reason, message);
-                String endMsg = "系统异常挂断";
-                if (TCCCCloudDef.TCCC_CALL_END_USER_HANG_UP == reason) {
-                    endMsg ="挂断成功";
-                }else if(TCCCCloudDef.TCCC_CALL_END_NO_SEAT_ONLINE == reason){
-                    endMsg ="坐席无人接听";
-                }else if(TCCCCloudDef.TCCC_CALL_END_SEAT_HAND_UP == reason){
-                    endMsg ="坐席已挂断";
-                }else if(TCCCCloudDef.TCCC_CALL_END_TIME_OUT == reason){
-                    endMsg ="坐席接听超时";
-                }
-                stopNgoBack(endMsg);
-            }
-
-            /// 坐席端用户发布/取消了自己的视频
-            @Override
-            public void onRemoteVideoAvailable(boolean available) {
-                super.onRemoteVideoAvailable(available);
-                if(available) {
-                    // 显示坐席端画面
-                    mTCCCCloud.startRemoteView(TCCCCloudDef.TCCC_VIDEO_STREAM_TYPE_BIG,txvMainVideoView);
-                    txvMainVideoView.setVisibility(View.VISIBLE);
-                }
-                else {
-                    txvMainVideoView.setVisibility(View.GONE);
-                }
-            }
-
-            /// 音量大小的反馈回调
-            @Override
-            public void onUserVoiceVolume(ArrayList<TCCCCloudDef.TCCCVolumeInfo> userVolumes, int totalVolume){
-                super.onUserVoiceVolume(userVolumes,totalVolume);
-            }
-
-            /// 坐席端用户发布/取消了自己的音频
-            @Override
-            public void onRemoteAudioAvailable(boolean available) {
-                super.onRemoteAudioAvailable(available);
-            }
-
-            /// SDK 与云端的连接已经断开
-            @Override
-            public void onConnectionLost() {
-                super.onConnectionLost();
-            }
-
-            /// SDK 正在尝试重新连接到云端
-            @Override
-            public void onTryToReconnect() {
-                super.onTryToReconnect();
-            }
-
-            /// SDK 与云端的连接已经恢复
-            @Override
-            public void onConnectionRecovery() {
-                super.onConnectionRecovery();
-            }
-        });
+        mTCCCCloud.setListener(mTCCCCloudListener);
         
         // 设置本地画面的渲染参数
         // 参考： https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a4dc074c69bdd51db822816e399044feb
@@ -236,7 +263,7 @@ public class CallingActivity extends TCCCBaseActivity {
             // 发起呼叫
             startVideoCall();
         }else{
-            String clientUserId = "46256ef2870b4848a1dc57fff22b9121";
+            String clientUserId = getAndroidUuid();
             // 计算UserSig
             GenerateTestUserSig.genTestUserSig(clientUserId, new GenerateTestUserSig.UserSigCallBack() {
                 @Override
@@ -264,7 +291,7 @@ public class CallingActivity extends TCCCBaseActivity {
 
                 @Override
                 public void onError(int code, String desc) {
-                    showToast("计算UserSig签名失败,"+desc);
+                    stopNgoBack("计算UserSig签名失败");
                 }
             });
         }
