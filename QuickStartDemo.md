@@ -24,7 +24,7 @@
 
 [](id:step2)
 ### 步骤2：下载 SDK 和 TCCCSimpleDemo 源码
-1. 根据实际业务需求 [TCCCSimpleDemo](https://github.com/tencentyun/TCCCSimpleDemo) 源码。
+1. 根据实际业务需求 [TCCCSimpleDemo](https://github.com/TencentCloud/tccc-examples) 源码。
 
 [](id:step3)
 ### 步骤3：配置 TCCCSimpleDemo 工程文件
