@@ -258,43 +258,48 @@ public class CallingActivity extends TCCCBaseActivity {
         txt_tips.setText("准备呼叫...");
 
         /// 判断SDK是否已登录
-        boolean isLogin = mTCCCCloud.isLogin();
-        if(isLogin){
-            // 发起呼叫
-            startVideoCall();
-        }else{
-            String clientUserId = getAndroidUuid();
-            // 计算UserSig
-            GenerateTestUserSig.genTestUserSig(clientUserId, new GenerateTestUserSig.UserSigCallBack() {
-                @Override
-                public void onSuccess(String userSig) {
-                    /// SDK 登录
-                    TCCCCloudDef.TCCCLoginParams loginParams = new TCCCCloudDef.TCCCLoginParams();
-                    loginParams.sdkAppId= GenerateTestUserSig.SDKAPPID;
-                    loginParams.clientUserId = clientUserId;
-                    // 正确的 UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并提供面向 App 的接口，在需要 UserSig 时由您的 App 向业务服务器发起请求获取动态 UserSig。
-                    // 更多详情请参见 [创建用户数据签名](https://cloud.tencent.com/document/product/679/58260)
-                    loginParams.clientUserSig = userSig;
-                    mTCCCCloud.login(loginParams, new TXCallback() {
-                        @Override
-                        public void onSuccess() {
-                            txt_tips.setText("登录成功...");
-                            startVideoCall();
-                        }
+        mTCCCCloud.isLogin(new TXCallback() {
+            @Override
+            public void onSuccess() {
+                // 发起呼叫
+                startVideoCall();
+            }
 
-                        @Override
-                        public void onError(int i, String s) {
-                            showToast("登录失败,"+s);
-                        }
-                    });
-                }
+            @Override
+            public void onError(int i, String s) {
+                String clientUserId = getAndroidUuid();
+                // 计算UserSig
+                GenerateTestUserSig.genTestUserSig(clientUserId, new GenerateTestUserSig.UserSigCallBack() {
+                    @Override
+                    public void onSuccess(String userSig) {
+                        /// SDK 登录
+                        TCCCCloudDef.TCCCLoginParams loginParams = new TCCCCloudDef.TCCCLoginParams();
+                        loginParams.sdkAppId= GenerateTestUserSig.SDKAPPID;
+                        loginParams.clientUserId = clientUserId;
+                        // 正确的 UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并提供面向 App 的接口，在需要 UserSig 时由您的 App 向业务服务器发起请求获取动态 UserSig。
+                        // 更多详情请参见 [创建用户数据签名](https://cloud.tencent.com/document/product/679/58260)
+                        loginParams.clientUserSig = userSig;
+                        mTCCCCloud.login(loginParams, new TXCallback() {
+                            @Override
+                            public void onSuccess() {
+                                txt_tips.setText("登录成功...");
+                                startVideoCall();
+                            }
 
-                @Override
-                public void onError(int code, String desc) {
-                    stopNgoBack("计算UserSig签名失败");
-                }
-            });
-        }
+                            @Override
+                            public void onError(int i, String s) {
+                                showToast("登录失败,"+s);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(int code, String desc) {
+                        stopNgoBack("计算UserSig签名失败");
+                    }
+                });
+            }
+        });
     }
 
     /// 发起呼叫
