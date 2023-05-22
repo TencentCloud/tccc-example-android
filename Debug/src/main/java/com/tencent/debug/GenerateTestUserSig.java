@@ -18,9 +18,16 @@ import okhttp3.Response;
 public class GenerateTestUserSig {
 
     /***
-     * 应用配置入口 APP ID
+     * 视频客服应用配置入口 APP ID
      */
     public static final String VIDEO_CHANNELID = "PLACEHOLDER";
+
+    /***
+     * 音频客服应用配置入口 APP ID
+     */
+    public static final String AUDIO_CHANNELID = "PLACEHOLDER";
+
+
     /**
      * 腾讯云 SDKAppId，需要替换为您自己账号下的 SDKAppId。
      * 进入腾讯云呼叫中心[控制台](https://console.cloud.tencent.com/ccc ) 创建应用，即可看到 SDKAppId，

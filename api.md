@@ -35,7 +35,7 @@ if(isLogin){
     loginParams.clientUserId = "UserId";
     // 正确的 UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并提供面向 App 的接口，在需要 UserSig 时由您的 App 向业务服务器发起请求获取动态 UserSig。
     // 更多详情请参见 [创建用户数据签名](https://cloud.tencent.com/document/product/679/58260)
-    loginParams.clientUserSig = ""; 
+    loginParams.clientUserSig = "xxx";  // 替换为自己服务端获取的 UserSig。
     mTCCCCloud.login(loginParams, new TXCallback() {
         @Override
         public void onSuccess() {
@@ -61,10 +61,18 @@ if(isLogin){
 ```java
 // 发起视频呼叫
 TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
-callParams.channelId = ""; // 应用配置入口的 APP ID
+callParams.channelId = ""; // 视频客服应用配置入口的 APP ID
+callParams.callType = TCCCCloudDef.TCCCCallType.Video;   // 指定为视频客服
 mTCCCCloud.startCall(callParams);
 // 用户主动结束呼叫或者结束通话
 mTCCCCloud.endCall();
+
+// 发起音频呼叫
+TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
+callParams.channelId = ""; // 音频客服应用配置入口的 APP ID
+callParams.callType = TCCCCloudDef.TCCCCallType.VIOP;   // 指定为音频客服
+mTCCCCloud.startCall(callParams);
+
 ```
 
 ### 视频相关接口函数

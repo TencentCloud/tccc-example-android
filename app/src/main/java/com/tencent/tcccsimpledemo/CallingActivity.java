@@ -36,12 +36,18 @@ public class CallingActivity extends TCCCBaseActivity {
     private ImageView img_mute_mic;
     private TextView  tv_mute_mic;
     private RelativeLayout ll_camera;
+    private RelativeLayout ll_soundMode;
     private ImageView img_camera;
+    private ImageView img_soundMode;
     private TextView tv_camera;
+    private TextView tv_soundMode;
+
     protected boolean mIsFrontCamera  = true;   // 是否是前置摄像头
     protected boolean mIsCameraOpen  = true;    // 是否打开摄像头
+    private boolean mIsSoundEarpiece = false;    // 是否为耳麦
     protected boolean mIsMuteMic     = false;  // 是否静音
     protected boolean mIsCalling     = false; // 正在通话中
+    protected boolean isAudioCall    = false; // 是否为音频通话
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,7 @@ public class CallingActivity extends TCCCBaseActivity {
     }
 
     private void initView() {
+
         txvMainVideoView = findViewById(R.id.txv_main);
         txvSmallView = findViewById(R.id.txv_small);
         txt_tips = findViewById(R.id.txt_tips);
@@ -71,12 +78,27 @@ public class CallingActivity extends TCCCBaseActivity {
         img_hangup = findViewById(R.id.img_hangup);
         tv_hangup = findViewById(R.id.tv_hangup);
         ll_camera = findViewById(R.id.ll_camera);
+        ll_soundMode = findViewById(R.id.ll_soundMode);
         img_camera = findViewById(R.id.img_camera);
         tv_camera = findViewById(R.id.tv_camera);
         ll_mute_mic = findViewById(R.id.ll_mute_mic);
         img_mute_mic = findViewById(R.id.img_mute_mic);
         tv_mute_mic = findViewById(R.id.tv_mute_mic);
+        tv_soundMode = findViewById(R.id.tx_soundMode);
+        img_soundMode = findViewById(R.id.img_soundMode);
 
+        Intent intent = getIntent();
+        String callType = intent.getStringExtra("callType");
+        if ("audio".equals(callType)) {
+            isAudioCall = true;
+            txvMainVideoView.setVisibility(View.GONE);
+            txvSmallView.setVisibility(View.GONE);
+            ll_camera.setVisibility(View.GONE);
+            ll_soundMode.setVisibility(View.VISIBLE);
+        } else {
+            ll_camera.setVisibility(View.VISIBLE);
+            ll_soundMode.setVisibility(View.GONE);
+        }
         mainHandler = new Handler(this.getApplicationContext().getMainLooper());
         initListener();
     }
@@ -108,6 +130,23 @@ public class CallingActivity extends TCCCBaseActivity {
                 }
             }
         });
+
+        ll_soundMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mIsSoundEarpiece = !mIsSoundEarpiece;
+                if(mIsSoundEarpiece){
+                    mTCCCCloud.setSoundMode(TCCCCloudDef.TCCC_AUDIO_ROUTE_SPEAKER);
+                    tv_soundMode.setText(R.string.calling_toast_sound_SPEAKER);
+                    img_soundMode.setActivated(true);
+                }else{
+                    mTCCCCloud.setSoundMode(TCCCCloudDef.TCCC_AUDIO_ROUTE_EARPIECE);
+                    tv_soundMode.setText(R.string.calling_toast_sound_EARPIECE);
+                    img_soundMode.setActivated(false);
+                }
+            }
+        });
+
         ll_hangup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -245,16 +284,19 @@ public class CallingActivity extends TCCCBaseActivity {
         mTCCCCloud = TCCCCloud.sharedInstance(getApplicationContext());
         /// 设置事件回调
         mTCCCCloud.setListener(mTCCCCloudListener);
-        
-        // 设置本地画面的渲染参数
-        // 参考： https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a4dc074c69bdd51db822816e399044feb
-        TCCCCloudDef.TCCCRenderParams tcccRenderParams = new TCCCCloudDef.TCCCRenderParams();
-        tcccRenderParams.fillMode = TCCCCloudDef.TCCC_VIDEO_RENDER_MODE_FILL;
-        mTCCCCloud.setLocalRenderParams(tcccRenderParams);
-        // 开启摄像头预览
-        mTCCCCloud.startLocalPreview(mIsFrontCamera, txvMainVideoView);
-        // 开启本地音频采集
-        mTCCCCloud.startLocalAudio(TCCCCloudDef.TCCC_AUDIO_QUALITY_SPEECH);
+
+        if (!isAudioCall) {
+            // 设置本地画面的渲染参数
+            // 参考： https://tccc.qcloud.com/assets/doc/user/android/classcom_1_1tencent_1_1tccc_1_1_t_c_c_c_cloud.html#a4dc074c69bdd51db822816e399044feb
+            TCCCCloudDef.TCCCRenderParams tcccRenderParams = new TCCCCloudDef.TCCCRenderParams();
+            tcccRenderParams.fillMode = TCCCCloudDef.TCCC_VIDEO_RENDER_MODE_FILL;
+            mTCCCCloud.setLocalRenderParams(tcccRenderParams);
+            // 开启摄像头预览
+            mTCCCCloud.startLocalPreview(mIsFrontCamera, txvMainVideoView);
+        }
+
+        // 开启本地音频采集，利宝设备必须设置为 TCCCCloudDef.TCCC_AUDIO_QUALITY_MUSIC
+        mTCCCCloud.startLocalAudio(TCCCCloudDef.TCCC_AUDIO_QUALITY_MUSIC);
         txt_tips.setText("准备呼叫...");
 
         /// 判断SDK是否已登录
@@ -262,6 +304,10 @@ public class CallingActivity extends TCCCBaseActivity {
             @Override
             public void onSuccess() {
                 // 发起呼叫
+                if (isAudioCall) {
+                    startAudioCall();
+                    return;
+                }
                 startVideoCall();
             }
 
@@ -309,6 +355,16 @@ public class CallingActivity extends TCCCBaseActivity {
         // 发起视频呼叫
         TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
         callParams.channelId = GenerateTestUserSig.VIDEO_CHANNELID;
+        mTCCCCloud.startCall(callParams);
+    }
+
+    private void startAudioCall() {
+        mIsCalling = false;
+        txt_tips.setText("呼叫中...");
+        // 发起视频呼叫
+        TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
+        callParams.channelId = GenerateTestUserSig.AUDIO_CHANNELID;
+        callParams.callType = TCCCCloudDef.TCCCCallType.VIOP;
         mTCCCCloud.startCall(callParams);
     }
 

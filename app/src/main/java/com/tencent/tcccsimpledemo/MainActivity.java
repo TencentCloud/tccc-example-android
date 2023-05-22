@@ -11,6 +11,8 @@ import com.tencent.tccc.TCCCCloud;
 
 public class MainActivity extends AppCompatActivity {
     private Button bntStartVideoCall;
+
+    private Button bntStartAudioCall;
     private TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, CallingActivity.class);
+                intent.putExtra("callType","video");
+                startActivity(intent);
+            }
+        });
+
+        bntStartAudioCall = findViewById(R.id.btn_startAudioCall);
+        bntStartAudioCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CallingActivity.class);
+                intent.putExtra("callType","audio");
                 startActivity(intent);
             }
         });
