@@ -364,7 +364,7 @@ public class CallingActivity extends TCCCBaseActivity {
         // 发起视频呼叫
         TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
         callParams.channelId = GenerateTestUserSig.AUDIO_CHANNELID;
-        callParams.callType = TCCCCloudDef.TCCCCallType.VIOP;
+        callParams.callType = TCCCCloudDef.TCCCCallType.VOIP;
         mTCCCCloud.startCall(callParams);
     }
 

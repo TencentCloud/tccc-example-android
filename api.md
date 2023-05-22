@@ -70,7 +70,7 @@ mTCCCCloud.endCall();
 // 发起音频呼叫
 TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
 callParams.channelId = ""; // 音频客服应用配置入口的 APP ID
-callParams.callType = TCCCCloudDef.TCCCCallType.VIOP;   // 指定为音频客服
+callParams.callType = TCCCCloudDef.TCCCCallType.VOIP;   // 指定为音频客服
 mTCCCCloud.startCall(callParams);
 
 ```
