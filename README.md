@@ -4,6 +4,7 @@
 - [快速跑通 Android Demo](QuickStartDemo.md)
 - [快速集成 Android SDK](QuickStartSDK.md)
 - [API 概览以及示例](api.md)
+- [音频客服请参考tccc-user-android-example](https://github.com/TencentCloud/tccc-user-android-example)
 
 ## 常见问题
 ###  如何查看 TCCC 日志？

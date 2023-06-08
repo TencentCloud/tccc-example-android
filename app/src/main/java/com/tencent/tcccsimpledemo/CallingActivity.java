@@ -365,6 +365,7 @@ public class CallingActivity extends TCCCBaseActivity {
         TCCCCloudDef.TCCCStartCallParams callParams = new TCCCCloudDef.TCCCStartCallParams();
         callParams.channelId = GenerateTestUserSig.AUDIO_CHANNELID;
         callParams.callType = TCCCCloudDef.TCCCCallType.VOIP;
+        // 该SDK即将废弃音频客服，音频客服请用：https://github.com/TencentCloud/tccc-user-android-example/
         mTCCCCloud.startCall(callParams);
     }
 
