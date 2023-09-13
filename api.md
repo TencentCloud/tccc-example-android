@@ -30,7 +30,7 @@ if(isLogin){
 }else{
     /// SDK 登录
     TCCCCloudDef.TCCCLoginParams loginParams = new TCCCCloudDef.TCCCLoginParams();
-    // 你呼叫中心 14xxx 开头的应用ID
+    // 你联络中心 14xxx 开头的应用ID
     loginParams.sdkAppId= 0;
     loginParams.clientUserId = "UserId";
     // 正确的 UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并提供面向 App 的接口，在需要 UserSig 时由您的 App 向业务服务器发起请求获取动态 UserSig。
